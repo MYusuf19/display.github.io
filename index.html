@@ -646,72 +646,113 @@
 
     </main>
 
-    <script>
-        // JAM DAN TANGGAL OTOMATIS - WAKTU WIB
-        function updateClock() {
-            const now = new Date();
+ 
+<script>
+    // JAM DAN TANGGAL OTOMATIS - WAKTU WIB
+    function updateClock() {
+        const now = new Date();
 
-            const timeString = new Intl.DateTimeFormat("id-ID", {
-                timeZone: "Asia/Jakarta",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false
-            }).format(now).replace(/\./g, ":");
+        const timeString = new Intl.DateTimeFormat("id-ID", {
+            timeZone: "Asia/Jakarta",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        }).format(now).replace(/\./g, ":");
 
-            const dateString = new Intl.DateTimeFormat("id-ID", {
-                timeZone: "Asia/Jakarta",
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric"
-            }).format(now);
+        const dateString = new Intl.DateTimeFormat("id-ID", {
+            timeZone: "Asia/Jakarta",
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        }).format(now);
 
-            document.getElementById("clock").textContent = timeString;
-            document.getElementById("date").textContent = dateString;
-        }
+        document.getElementById("clock").textContent = timeString;
+        document.getElementById("date").textContent = dateString;
+    }
 
-        updateClock();
-        setInterval(updateClock, 1000);
+    updateClock();
+    setInterval(updateClock, 1000);
 
-        // TOMBOL FULLSCREEN
-        async function toggleFullscreen() {
-            try {
-                if (!document.fullscreenElement) {
-                    await document.documentElement.requestFullscreen();
-                } else {
-                    await document.exitFullscreen();
-                }
-            } catch (error) {
-                console.error("Mode fullscreen tidak dapat diaktifkan:", error);
+
+    // TOMBOL FULLSCREEN
+    async function toggleFullscreen() {
+        try {
+            if (!document.fullscreenElement) {
+                await document.documentElement.requestFullscreen();
+            } else {
+                await document.exitFullscreen();
             }
+        } catch (error) {
+            console.error(
+                "Mode fullscreen tidak dapat diaktifkan:", error
+            );
         }
+    }
 
-        function updateFullscreenButton() {
-            const button = document.getElementById("fullscreenButton");
+    function updateFullscreenButton() {
+        const button = document.getElementById("fullscreenButton");
 
-            button.textContent = document.fullscreenElement
-                ? "⛶ KELUAR FULL SCREEN"
-                : "⛶ FULL SCREEN";
+        if (!button) return;
+
+        button.textContent = document.fullscreenElement
+            ? "⛶ KELUAR FULL SCREEN"
+            : "⛶ FULL SCREEN";
+    }
+
+    document.addEventListener("fullscreenchange", updateFullscreenButton);
+
+
+    // KECEPATAN TEKS BERJALAN
+    function updateTickerSpeed() {
+        const tickerTrack = document.getElementById("tickerTrack");
+
+        if (!tickerTrack) return;
+
+        const tickerText = tickerTrack.querySelector(".ticker-group");
+
+        if (!tickerText) return;
+
+        const tickerWidth = tickerText.getBoundingClientRect().width;
+
+        if (tickerWidth > 0) {
+            const speedPixelsPerSecond = 75;
+            const duration = tickerWidth / speedPixelsPerSecond;
+
+            tickerTrack.style.animationDuration = duration + "s";
         }
+    }
 
-        document.addEventListener("fullscreenchange", updateFullscreenButton);
+    updateTickerSpeed();
+    window.addEventListener("resize", updateTickerSpeed);
 
-        // KECEPATAN TEKS BERJALAN
-        function updateTickerSpeed() {
-            const tickerTrack = document.getElementById("tickerTrack");
-            const tickerText = tickerTrack.querySelector(".ticker-group");
-            const tickerWidth = tickerText.getBoundingClientRect().width;
 
-            if (tickerWidth > 0) {
-                const speedPixelsPerSecond = 75;
-                const duration = tickerWidth / speedPixelsPerSecond;
-                tickerTrack.style.animationDuration = duration + "s";
-            }
+    // AUTO REFRESH SETIAP 1 JAM
+    const REFRESH_INTERVAL = 60 * 60 * 1000;
+
+    setInterval(() => {
+        window.location.reload();
+    }, REFRESH_INTERVAL);
+
+
+    // COBA FULLSCREEN SAAT HALAMAN DIBUKA
+    // Browser mungkin menolak karena memerlukan interaksi pengguna.
+    async function tryFullscreen() {
+        if (document.fullscreenElement) return;
+
+        try {
+            await document.documentElement.requestFullscreen();
+        } catch (error) {
+            console.log(
+                "Klik tombol FULL SCREEN untuk mengaktifkan mode layar penuh."
+            );
         }
+    }
 
-        updateTickerSpeed();
-        window.addEventListener("resize", updateTickerSpeed);
-    </script>
+    // Percobaan awal
+    tryFullscreen();
+</script>
+
 </body>
 </html>
